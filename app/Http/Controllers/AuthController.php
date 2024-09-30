@@ -33,7 +33,7 @@ class AuthController extends Controller
                 return response()->json([
                     'error' => 'Username not found',
                     'status' => 401,
-                ], 401);
+                ], 201);
             }
         }else{
             $user = Auth::user();
@@ -49,7 +49,7 @@ class AuthController extends Controller
         return response()->json([
             'password' => 'Password incorrect',
             'status' => 401
-        ], 401);
+        ], 201);
     }
 
     public function destroy(Request $request){

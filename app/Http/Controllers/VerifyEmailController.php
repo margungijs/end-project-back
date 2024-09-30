@@ -17,15 +17,25 @@ class VerifyEmailController extends Controller
         if (! hash_equals(sha1($user->getEmailForVerification()), $hash)) {
             return redirect()->route('login')->withErrors(['email' => 'Invalid verification link.']);
         }
-        
+
         if ($user->hasVerifiedEmail()) {
-            return redirect()->intended(config('app.frontend_url'));
+            Auth::login($user);
+
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return redirect()->intended(config('app.frontend_url') . '/dashboard')
+                ->withCookie(cookie('auth_token', $token, 60, null, null, true, true, false, 'Strict'));
         }
 
         $user->markEmailAsVerified();
 
         event(new Verified($user));
 
-        return redirect()->intended(config('app.frontend_url'));
+        Auth::login($user);
+
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        return redirect()->intended(config('app.frontend_url') . '/dashboard')
+            ->withCookie(cookie('auth_token', $token, 60, null, null, true, true, false, 'Strict'));
     }
 }
