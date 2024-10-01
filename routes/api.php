@@ -7,6 +7,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\VerifyEmailController;
+use App\Http\Controllers\ImageController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();

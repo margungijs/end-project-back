@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Storage;
 
 class ImageController extends Controller
 {
@@ -21,17 +22,19 @@ class ImageController extends Controller
             ], 201);
         }
 
-        $name = User::find($request->user()->name);
+        $name = $request->user()->name;
 
         $image = $request->file('image');
 
-        $imageName = '' . $name . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+        $imageName = $name . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
 
-        $image->storeAs('public/images', $imageName);
+        $image->storeAs('images', $imageName, 'public');
 
         $user = User::find($request->user()->id);
 
         $user->image = $imageName;
+
+        $user->save();
 
         return response()->json([
             'status' => 201,
