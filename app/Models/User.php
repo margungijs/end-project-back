@@ -60,4 +60,9 @@ class User extends Authenticatable implements MustVerifyEmail
 
         $this->notify(new VerifyEmail($verificationUrl));
     }
+
+    public function shortcuts()
+    {
+        return $this->hasMany(Shortcut::class)->limit(3);
+    }
 }
