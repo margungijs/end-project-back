@@ -12,7 +12,8 @@ class Shortcut extends Model
     protected $fillable = [
         'name',
         'route',
-        'customisation'
+        'customisation',
+        'user_id'
     ];
 
     protected $casts = [
@@ -22,5 +23,6 @@ class Shortcut extends Model
     protected $hidden = [
         'created_at',
         'updated_at',
+        'user_id'
     ];
 }

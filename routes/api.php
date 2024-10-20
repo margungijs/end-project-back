@@ -3,12 +3,16 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ShortcutController;
+use App\Http\Controllers\ImageController;
+use App\Http\Controllers\FriendshipController;
 
 Route::prefix('authenticated')->group(function () {
     Route::get('/user', function (Request $request) {
         return response()->json([
             'status' => 201,
-            'user' => $request->user()->with('shortcuts')->first(),
+            'user' => $request->user()
+                ->with(['shortcuts', 'requests'])
+                ->first(),
         ], 201);
     });
 
@@ -20,4 +24,12 @@ Route::prefix('authenticated')->group(function () {
     });
 
     Route::post('/shortcut', [ShortcutController::class, 'store']);
+
+    Route::post('/image', [ImageController::class, 'store']);
+
+    Route::post('/friendAdd', [FriendshipController::class, 'store']);
+
+    Route::post('/friendAccept', [FriendshipController::class, 'accept']);
+
+    Route::post('/removeFriend', [FriendshipController::class, 'delete']);
 })->middleware('auth:sanctum');

@@ -10,6 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Config;
+use App\Models\friendship;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -64,5 +65,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function shortcuts()
     {
         return $this->hasMany(Shortcut::class)->limit(3);
+    }
+
+    public function requests()
+    {
+        return $this->hasMany(friendship::class, 'friend_id')->where('status', 0);
     }
 }
