@@ -10,9 +10,7 @@ Route::prefix('authenticated')->group(function () {
     Route::get('/user', function (Request $request) {
         return response()->json([
             'status' => 201,
-            'user' => $request->user()
-                ->with(['shortcuts', 'requests'])
-                ->first(),
+            'user' => $request->user()->load(['shortcuts', 'requests', 'friendsAsUser', 'friendsAsFriend']),
         ], 201);
     });
 
