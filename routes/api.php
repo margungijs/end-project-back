@@ -6,6 +6,8 @@ use App\Http\Controllers\ShortcutController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\FriendshipController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\TemplateController;
+use App\Models\Template;
 
 Route::prefix('authenticated')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -33,4 +35,13 @@ Route::prefix('authenticated')->group(function () {
     Route::post('/friendAccept', [FriendshipController::class, 'accept']);
 
     Route::post('/removeFriend', [FriendshipController::class, 'delete']);
+
+    Route::post('/template', [TemplateController::class, 'store']);
+
+    Route::get('/templates', function (Request $request) {
+        return response()->json([
+            'status' => 201,
+            'templates' => Template::all(),
+        ], 201);
+    });
 })->middleware('auth:sanctum');
