@@ -11,6 +11,7 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Config;
 use App\Models\friendship;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -36,6 +37,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $hidden = [
         'password',
         'remember_token',
+        'email_verified_at',
     ];
 
     /**
@@ -82,5 +84,21 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(User::class, 'friendships', 'friend_id', 'user_id')
             ->wherePivot('status', 1);
+    }
+
+    public function getFriendshipStatus($userId)
+    {
+        $friendship = DB::table('friendships')
+            ->where(function ($query) use ($userId) {
+                $query->where('user_id', $this->id)
+                    ->where('friend_id', $userId);
+            })
+            ->orWhere(function ($query) use ($userId) {
+                $query->where('friend_id', $this->id)
+                    ->where('user_id', $userId);
+            })
+            ->first();
+
+        return $friendship ? $friendship->status : null;
     }
 }

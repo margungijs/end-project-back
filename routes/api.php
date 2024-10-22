@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ShortcutController;
 use App\Http\Controllers\ImageController;
 use App\Http\Controllers\FriendshipController;
+use App\Http\Controllers\UserController;
 
 Route::prefix('authenticated')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -20,6 +21,8 @@ Route::prefix('authenticated')->group(function () {
             'shortcuts' => $request->user()->shortcuts,
         ], 201);
     });
+
+    Route::get('/getUser/{id}', [UserController::class, 'fetch']);
 
     Route::post('/shortcut', [ShortcutController::class, 'store']);
 

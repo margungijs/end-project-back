@@ -30,11 +30,17 @@ class FriendshipController extends Controller
     }
 
     public static function delete(Request $request){
-        friendship::where('user_id', $request->user()->id)
-            ->where('friend_id', $request->friend_id)
-            ->orWhere('friend_id', $request->user()->id)
-            ->where('user_id', $request->friend_id)
-            ->delete();
+        if($request->user_id){
+            friendship::where('friend_id', $request->user()->id)
+                ->where('user_id', $request->user_id)
+                ->delete();
+            return response()->noContent();
+        }else if($request->friend_id){
+            friendship::where('user_id', $request->user()->id)
+                ->where('friend_id', $request->friend_id)
+                ->delete();
+            return response()->noContent();
+        }
 
         return response()->noContent();
     }
