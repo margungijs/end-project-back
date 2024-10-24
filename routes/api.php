@@ -11,10 +11,17 @@ use App\Models\Template;
 
 Route::prefix('authenticated')->group(function () {
     Route::get('/user', function (Request $request) {
-        return response()->json([
-            'status' => 201,
-            'user' => $request->user()->load(['shortcuts', 'requests', 'friendsAsUser', 'friendsAsFriend']),
-        ], 201);
+        if($request->user()){
+            return response()->json([
+                'status' => 201,
+                'user' => $request->user()->load(['shortcuts', 'requests', 'friendsAsUser', 'friendsAsFriend']),
+            ], 201);
+        }else{
+            return response()->json([
+                'status' => 401,
+                'message' => 'Unauthenticated',
+            ], 401);
+        }
     });
 
     Route::get('/shortcuts', function (Request $request) {
@@ -38,10 +45,11 @@ Route::prefix('authenticated')->group(function () {
 
     Route::post('/template', [TemplateController::class, 'store']);
 
-    Route::get('/templates', function (Request $request) {
+    Route::get('/templates', function () {
         return response()->json([
             'status' => 201,
             'templates' => Template::all(),
         ], 201);
     });
 })->middleware('auth:sanctum');
+

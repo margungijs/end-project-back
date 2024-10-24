@@ -20,13 +20,19 @@ class FriendshipController extends Controller
     }
 
     public static function accept(Request $request){
-        friendship::where('friend_id', $request->user()->id)
+        $friendRequest = friendship::where('friend_id', $request->user()->id)
             ->where('user_id', $request->user_id)
-            ->update([
+            ->first();
+
+        if($friendRequest){
+            $friendRequest->update([
                 'status' => 1
             ]);
 
-        return response()->noContent();
+            return response()->noContent();
+        }else{
+            return response()->json(['error' => 'Friend request not found'], 404);
+        }
     }
 
     public static function delete(Request $request){
