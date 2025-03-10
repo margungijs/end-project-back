@@ -29,7 +29,7 @@ class TemplateController extends Controller
 
     public static function like(Request $request)
     {
-        $rating = TemplateRating::where('template_id', $request->id);
+        $rating = TemplateRating::where('template_id', $request->id)->first();
 
         if(!$rating){
             TemplateRating::create([
@@ -60,5 +60,23 @@ class TemplateController extends Controller
             ->delete();
 
         return response()->noContent();
+    }
+
+    public static function fetch(Request $request)
+    {
+        $user = $request->user();
+
+        $ratedTemplateIds = TemplateRating::where('user_id', $user->id)->pluck('template_id')->toArray();
+
+        $templates = Template::whereIn('id', $ratedTemplateIds)
+            ->orWhere('id', 1)
+            ->orWhere('user_id', $user->id)
+            ->distinct()
+            ->get();
+
+        return response()->json([
+            'status' => 201,
+            'templates' => $templates,
+        ], 201);
     }
 }

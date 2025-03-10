@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Config;
 use App\Models\friendship;
 use Illuminate\Support\Facades\DB;
+use App\Models\PostLimit;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -101,4 +102,19 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return $friendship ? $friendship->status : null;
     }
+
+    public function posts(){
+        return $this->hasMany(Post::class);
+    }
+
+    public function templates(){
+        return $this->hasMany(Template::class);
+    }
+
+    public function postLimit()
+    {
+        return $this->hasOne(PostLimit::class)->latest('created_at');
+    }
+
+
 }

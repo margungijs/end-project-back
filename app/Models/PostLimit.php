@@ -5,23 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Template extends Model
+class PostLimit extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'user_id',
-        'questions',
-        'title',
-        'description',
+        'posts',
+        'limit'
     ];
 
     protected $casts = [
-        'questions' => 'array',
+        'posts' => 'array'
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 }

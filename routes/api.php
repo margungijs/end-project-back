@@ -7,14 +7,15 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\FriendshipController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\TemplateController;
-use App\Models\Template;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ChatController;
 
 Route::prefix('authenticated')->group(function () {
     Route::get('/user', function (Request $request) {
         if($request->user()){
             return response()->json([
                 'status' => 201,
-                'user' => $request->user()->load(['shortcuts', 'requests', 'friendsAsUser', 'friendsAsFriend']),
+                'user' => $request->user()->load(['shortcuts', 'requests', 'friendsAsUser', 'friendsAsFriend', 'posts', 'templates', 'postLimit']),
             ], 201);
         }else{
             return response()->json([
@@ -45,11 +46,28 @@ Route::prefix('authenticated')->group(function () {
 
     Route::post('/template', [TemplateController::class, 'store']);
 
-    Route::get('/templates', function () {
-        return response()->json([
-            'status' => 201,
-            'templates' => Template::all(),
-        ], 201);
-    });
+    Route::get('/templates', [TemplateController::class, 'fetch']);
+
+    Route::post('/post', [PostController::class, 'store']);
+
+    Route::post('/postImage', [PostController::class, 'postImage']);
+
+    Route::get('/feed', [UserController::class, 'feed']);
+
+    Route::post('/sendMessage', [ChatController::class, 'send']);
+
+    Route::get('/messages/{friend_id}', [ChatController::class, 'fetch']);
+
+    Route::post('/edit', [UserController::class, 'edit']);
+
+    Route::get('/fetchPosts', [PostController::class, 'fetch']);
+
+    Route::post('/postLike', [PostController::class, 'like']);
+
+    Route::post('/templateLike', [TemplateController::class, 'like']);
+
+    Route::get('/explore', [UserController::class, 'explore']);
+
+    Route::get('/collection', [UserController::class, 'collection']);
 })->middleware('auth:sanctum');
 

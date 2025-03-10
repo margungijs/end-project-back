@@ -11,14 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('post_limits', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->json('answers');
-            $table->integer('template')->default(0);
-            $table->foreignId('user_id')->constrained();
-            $table->integer('views')->default(0);
-            $table->string('image')->nullable();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->json('posts');
+            $table->integer('limit');
             $table->timestamps();
         });
     }
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('post_limits');
     }
 };

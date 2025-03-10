@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Nette\Schema\ValidationException;
 use Illuminate\Http\JsonResponse;
+use App\Models\PostLimit;
 
 class RegisteredUserController extends Controller
 {
@@ -33,6 +34,12 @@ class RegisteredUserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->string('password')),
+            ]);
+
+            PostLimit::create([
+                'user_id' => $user->id,
+                'limit' => 1,
+                'posts' => []
             ]);
 
             event(new Registered($user));

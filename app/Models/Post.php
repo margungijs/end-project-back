@@ -14,10 +14,25 @@ class Post extends Model
         'answers',
         'template',
         'user_id',
-        'views'
+        'views',
+        'image'
     ];
 
     protected $casts = [
         'answers' => 'array',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function template()
+    {
+        return $this->belongsTo(Template::class);
+    }
+
+    public function templateUsed(){
+        return $this->belongsTo(Template::class, 'template', 'id');
+    }
 }

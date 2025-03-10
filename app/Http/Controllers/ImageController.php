@@ -22,24 +22,16 @@ class ImageController extends Controller
             ], 201);
         }
 
-        $name = $request->user()->name;
+        $user = $request->user();
 
-        $image = $request->file('image');
+        if ($user->image && file_exists(storage_path('app/public/' . $user->image))) {
+            unlink(storage_path('app/public/' . $user->image));
+        }
 
-        $imageName = $name . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+        $user->update([
+            'image' => $request->file('image')->store('images', 'public')
+        ]);
 
-        $image->storeAs('images', $imageName, 'public');
-
-        $user = User::find($request->user()->id);
-
-        $user->image = $imageName;
-
-        $user->save();
-
-        return response()->json([
-            'status' => 201,
-            'message' => 'Image uploaded successfully',
-            'image' => $imageName
-        ], 201);
+        return response()->noContent();
     }
 }
