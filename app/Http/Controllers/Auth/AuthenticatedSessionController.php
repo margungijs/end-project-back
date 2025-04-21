@@ -34,6 +34,10 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return response()->noContent();
+        return response()->noContent()->withCookie(
+            cookie()->forget('Chronicle_session')
+        )->withCookie(
+            cookie()->forget('XSRF-TOKEN')
+        );
     }
 }

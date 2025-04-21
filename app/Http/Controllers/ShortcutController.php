@@ -37,4 +37,11 @@ class ShortcutController extends Controller
             ], 422);
         }
     }
+
+    public static function delete(Request $request)
+    {
+        Shortcut::where('id', $request->id)->delete();
+
+        return response()->noContent();
+    }
 }

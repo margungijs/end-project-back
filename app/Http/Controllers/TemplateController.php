@@ -14,15 +14,21 @@ class TemplateController extends Controller
             'title' => ['required', 'string', 'max:50', 'unique:templates,title,NULL,id,user_id,' . $request->user()->id],
             'description' => ['required', 'string', 'max:255'],
             'questions' => ['required', 'array'],
-            'questions.*' => ['required', 'string', 'max:255']
+            'questions.*' => ['required', 'string', 'max:255'],
+            'tags' => ['nullable', 'array'],
+            'tags.*' => ['string', 'max:50'],
         ]);
 
-        Template::create([
+        $template = Template::create([
             'user_id' => $request->user()->id,
             'title' => $request->title,
             'description' => $request->description,
             'questions' => $request->questions
         ]);
+
+        if ($request->filled('tags')) {
+            $template->syncTags($request->input('tags'));
+        }
 
         return response()->noContent();
     }
@@ -45,6 +51,14 @@ class TemplateController extends Controller
 
     public static function view(Request $request)
     {
+        $template = Template::find($request->id);
+
+        $user = $request->user();
+
+        if ($user && $template->user_id == $user->id) {
+            return response()->noContent();
+        }
+
         Template::where('id', $request->id)
             ->update([
                 'views' => Template::where('id', $request->id)->first()->views + 1

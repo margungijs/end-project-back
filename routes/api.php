@@ -9,6 +9,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ChatController;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\SearchController;
 
 Route::prefix('authenticated')->group(function () {
     Route::get('/user', function (Request $request) {
@@ -35,6 +37,8 @@ Route::prefix('authenticated')->group(function () {
     Route::get('/getUser/{id}', [UserController::class, 'fetch']);
 
     Route::post('/shortcut', [ShortcutController::class, 'store']);
+
+    Route::post('/removeShortcut', [ShortcutController::class, 'delete']);
 
     Route::post('/image', [ImageController::class, 'store']);
 
@@ -69,5 +73,15 @@ Route::prefix('authenticated')->group(function () {
     Route::get('/explore', [UserController::class, 'explore']);
 
     Route::get('/collection', [UserController::class, 'collection']);
+
+    Route::get('/friends', [FriendshipController::class, 'fetch']);
+
+    Route::post('/templateView', [TemplateController::class, 'view']);
+
+    Route::post('/postView', [PostController::class, 'view']);
+
+    Route::get('/search', [SearchController::class, 'search']);
+
+    Route::get('/searchSpecific', [SearchController::class, 'searchSpecific']);
 })->middleware('auth:sanctum');
 
