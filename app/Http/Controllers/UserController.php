@@ -102,7 +102,7 @@ class UserController extends Controller
 
     public static function edit(Request $request){
         $request->validate([
-            'name' => ['string', 'max:50', 'unique:users,name'],
+            'name' => ['string', 'between:3,30', 'unique:users,name'],
             'limit' => ['integer', 'between:0,12'],
             'tts' => ['boolean'],
             'privacy' => ['integer', 'in:0,1']
@@ -185,15 +185,15 @@ class UserController extends Controller
 
         $userInterestTags = $postTags->merge($templateTags)->unique()->values();
 
-        $posts = Post::/*::where('user_id', '!=', $user->id)*/
-//            whereHas('user', fn($q) => $q->where('privacy', 0))
-//            ->where('privacy', 0)
-            with(['user:id,name,image', 'templateUsed', 'tags'])
+        $posts = Post::where('user_id', '!=', $user->id)
+            ->whereHas('user', fn($q) => $q->where('privacy', 0))
+            ->where('privacy', 0)
+            ->with(['user:id,name,image', 'templateUsed', 'tags'])
             ->orderByDesc('created_at')
             ->get();
 
-        $templates = Template::/*where('user_id', '!=', $user->id)*/
-            whereHas('user', fn($q) => $q->where('privacy', 0))
+        $templates = Template::where('user_id', '!=', $user->id)
+            ->whereHas('user', fn($q) => $q->where('privacy', 0))
             ->with(['user:id,name,image', 'tags'])
             ->orderByDesc('created_at')
             ->get();
@@ -376,7 +376,7 @@ class UserController extends Controller
 
         foreach ($friends as $friend) {
             $posts = Template::where('user_id', $friend->id)
-                ->with(['user:id,name,image', 'templateUsed'])
+                ->with(['user:id,name,image'])
                 ->get();
 
             $postIds = $posts->pluck('id');
@@ -487,7 +487,7 @@ class UserController extends Controller
             ->toArray();
 
         $posts = Post::whereIn('id', $likedPostIds)
-            ->with(['user:id,name,image', 'templateUsed'])
+            ->with(['user:id,name,image', 'templateUsed', 'tags'])
             ->get()
             ->map(function ($post) {
                 $post->liked = true;
@@ -499,7 +499,7 @@ class UserController extends Controller
             ->toArray();
 
         $templates = Template::whereIn('id', $likedTemplateIds)
-            ->with('user:id,name,image')
+            ->with('user:id,name,image', 'tags')
             ->get()
             ->map(function ($template) {
                 $template->liked = true;

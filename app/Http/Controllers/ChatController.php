@@ -11,7 +11,11 @@ class ChatController extends Controller
 {
     public static function send(Request $request)
     {
-        if($request->user_id){
+        $request->validate([
+            'message' => ['required', 'string', 'max:500'],
+        ]);
+
+        if($request->user_id) {
             $message = Conversation::create([
                 'user_id' => $request->user_id,
                 'friend_id' => $request->user()->id,
@@ -19,9 +23,13 @@ class ChatController extends Controller
                 'sender' => $request->user()->id,
             ]);
 
-            broadcast(new MessageSent($request->user_id, $request->message, $request->user()->id, $request->user()->id))->toOthers();
+            $user_id = min($request->user_id, $request->user()->id);
+            $friend_id = max($request->user_id, $request->user()->id);
+
+            broadcast(new MessageSent($user_id, $request->message, $friend_id, $request->user()->id))->toOthers();
+
             return response()->json($message);
-        }else{
+        } else {
             $message = Conversation::create([
                 'user_id' => $request->user()->id,
                 'friend_id' => $request->friend_id,
@@ -29,7 +37,11 @@ class ChatController extends Controller
                 'sender' => $request->user()->id,
             ]);
 
-            broadcast(new MessageSent($request->user()->id, $request->message, $request->friend_id, $request->user()->id))->toOthers();
+            $user_id = min($request->user()->id, $request->friend_id);
+            $friend_id = max($request->user()->id, $request->friend_id);
+
+            broadcast(new MessageSent($user_id, $request->message, $friend_id, $request->user()->id))->toOthers();
+
             return response()->json($message);
         }
     }

@@ -15,37 +15,37 @@ class PostController extends Controller
         $request->validate([
             'title' => ['required', 'string', 'max:255', 'unique:posts,title,NULL,id,user_id,' . $request->user()->id],
             'answers' => ['required', 'array'],
-            'answers.*' => ['required', 'string', 'max:225'],
+            'answers.*' => ['required', 'string', 'between:1,225', ],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:50'],
             'privacy' => ['required', 'integer', 'in:0,1']
         ]);
 
         return DB::transaction(function () use ($request) {
-            $post = Post::create([
-                'title' => $request->title,
-                'answers' => $request->answers,
-                'template' => $request->template,
-                'user_id' => $request->user()->id,
-                'views' => 0,
-                'image' => null,
-                'privacy' => $request->privacy
-            ]);
+//            $post = Post::create([
+//                'title' => $request->title,
+//                'answers' => $request->answers,
+//                'template' => $request->template,
+//                'user_id' => $request->user()->id,
+//                'views' => 0,
+//                'image' => null,
+//                'privacy' => $request->privacy
+//            ]);
 
-            if ($request->filled('tags')) {
-                $post->syncTags($request->input('tags'));
-            }
+//            if ($request->filled('tags')) {
+//                $post->syncTags($request->input('tags'));
+//            }
 
-            $postLimit = PostLimit::where('user_id', $request->user()->id)->latest()->first();
-            if ($postLimit) {
-                $postLimit->update([
-                    'posts' => array_merge($postLimit->posts ?? [], [$post->id])
-                ]);
-            }
+//            $postLimit = PostLimit::where('user_id', $request->user()->id)->latest()->first();
+//            if ($postLimit) {
+//                $postLimit->update([
+//                    'posts' => array_merge($postLimit->posts ?? [], [$post->id])
+//                ]);
+//            }
 
             return response()->json([
                 'status' => 201,
-                'id' => $post->id,
+//                'id' => $post->id,
             ], 201);
         });
     }

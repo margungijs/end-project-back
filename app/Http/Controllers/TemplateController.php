@@ -14,7 +14,7 @@ class TemplateController extends Controller
             'title' => ['required', 'string', 'max:50', 'unique:templates,title,NULL,id,user_id,' . $request->user()->id],
             'description' => ['required', 'string', 'max:255'],
             'questions' => ['required', 'array'],
-            'questions.*' => ['required', 'string', 'max:255'],
+            'questions.*' => ['required', 'string', 'max:100'],
             'tags' => ['nullable', 'array'],
             'tags.*' => ['string', 'max:50'],
         ]);

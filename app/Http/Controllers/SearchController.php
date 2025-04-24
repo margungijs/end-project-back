@@ -28,15 +28,15 @@ class SearchController extends Controller
             ->get();
 
         $posts = Post::where('title', 'LIKE', "%{$query}%")
-//            ->whereHas('user', fn($q) => $q->where('privacy', 0))
-//            ->where('privacy', 0)
+            ->whereHas('user', fn($q) => $q->where('privacy', 0))
+            ->where('privacy', 0)
             ->with('user:id,name,image')
             ->select('id', 'title', 'user_id', 'created_at')
             ->limit(5)
             ->get();
 
         $templates = Template::where('title', 'LIKE', "%{$query}%")
-//            ->whereHas('user', fn($q) => $q->where('privacy', 0))
+            ->whereHas('user', fn($q) => $q->where('privacy', 0))
             ->with('user:id,name,image')
             ->select('id', 'title', 'user_id', 'created_at')
             ->limit(5)
@@ -48,15 +48,15 @@ class SearchController extends Controller
             ->get();
 
         $taggedPosts = Post::withAnyTags([$query])
-//            ->whereHas('user', fn($q) => $q->where('privacy', 0))
-//            ->where('privacy', 0)
+            ->whereHas('user', fn($q) => $q->where('privacy', 0))
+            ->where('privacy', 0)
             ->with('user:id,name,image')
             ->select('id', 'title', 'user_id', 'created_at')
             ->limit(5)
             ->get();
 
         $taggedTemplates = Template::withAnyTags([$query])
-//            ->whereHas('user', fn($q) => $q->where('privacy', 0))
+            ->whereHas('user', fn($q) => $q->where('privacy', 0))
             ->with('user:id,name,image')
             ->select('id', 'title', 'user_id', 'created_at')
             ->limit(5)
@@ -121,30 +121,30 @@ class SearchController extends Controller
                 });
         }
 
-        if (in_array('tags', $sections)) {
-            $tags = Tag::where('name->en', 'like', "%$query%")
-                ->take(10)
-                ->get();
-            $results['tags'] = $tags;
-
-            if ($tags->count() > 0) {
-                $tagIds = $tags->pluck('id')->toArray();
-
-                if (in_array('tagged_posts', $sections)) {
-                    $results['tagged_posts'] = Post::withAnyTags($tagIds)
-                        ->with(['user:id,name,image', 'templateUsed', 'tags'])
-                        ->take(10)
-                        ->get();
-                }
-
-                if (in_array('tagged_templates', $sections)) {
-                    $results['tagged_templates'] = Template::withAnyTags($tagIds)
-                        ->with(['user:id,name,image', 'tags'])
-                        ->take(10)
-                        ->get();
-                }
-            }
-        }
+//        if (in_array('tags', $sections)) {
+//            $tags = Tag::where('name->en', 'like', "%$query%")
+//                ->take(10)
+//                ->get();
+//            $results['tags'] = $tags;
+//
+//            if ($tags->count() > 0) {
+//                $tagIds = $tags->pluck('id')->toArray();
+//
+//                if (in_array('tagged_posts', $sections)) {
+//                    $results['tagged_posts'] = Post::withAnyTags($tagIds)
+//                        ->with(['user:id,name,image', 'templateUsed', 'tags'])
+//                        ->take(10)
+//                        ->get();
+//                }
+//
+//                if (in_array('tagged_templates', $sections)) {
+//                    $results['tagged_templates'] = Template::withAnyTags($tagIds)
+//                        ->with(['user:id,name,image', 'tags'])
+//                        ->take(10)
+//                        ->get();
+//                }
+//            }
+//        }
 
         if (in_array('tagged_posts', $sections) && empty($results['tagged_posts'])) {
             $results['tagged_posts'] = Post::withAnyTags([$query])
