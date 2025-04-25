@@ -41,13 +41,20 @@ class UserController extends Controller
 
         $friendshipStatus = $request->user()->getFriendshipStatus($id);
 
-        $posts = $user->posts()->with('templateUsed')->get();
+
+        if($user->id === $request->user()->id || $user->privacy !== 1 || $friendshipStatus == 1){
+            $posts = $user->posts()->with('templateUsed')->get();
+            $templates = $user->templates;
+        }else{
+            $posts = [];
+            $templates = [];
+        }
 
         return response()->json([
             'user' => $user,
             'status' => $friendshipStatus,
             'posts' => $posts,
-            'templates' => $user->templates,
+            'templates' => $templates,
         ], 200);
     }
 

@@ -85,3 +85,5 @@ Route::prefix('authenticated')->group(function () {
     Route::get('/searchSpecific', [SearchController::class, 'searchSpecific']);
 })->middleware('auth:sanctum');
 
+
+

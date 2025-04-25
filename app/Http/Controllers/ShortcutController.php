@@ -12,11 +12,10 @@ class ShortcutController extends Controller
     {
         try {
             $request->validate([
-                'name' => ['required', 'string', 'max:50', 'unique:shortcuts,name,NULL,id,user_id,' . $request->user()->id],
+                'name' => ['required', 'string', 'max:20', 'unique:shortcuts,name,NULL,id,user_id,' . $request->user()->id],
                 'route' => ['required', 'string', 'max:100', 'unique:shortcuts,route,NULL,id,user_id,' . $request->user()->id],
                 'icon' => ['required', 'numeric', 'between:1,30'],
                 'color' => ['required', 'string', 'max:50'],
-                'hover_color' => ['required', 'string', 'max:50']
             ]);
 
             Shortcut::create([
@@ -26,7 +25,7 @@ class ShortcutController extends Controller
                 'customisation' => [
                     'icon' => $request->icon,
                     'color' => $request->color,
-                    'hover_color' => $request->hover_color
+                    'hover_color' => 'white'
                 ]
             ]);
 

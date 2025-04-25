@@ -50,6 +50,12 @@ class ChatController extends Controller
     {
         $user_id = $request->user()->id;
 
+        $friendshipStatus = $request->user()->getFriendshipStatus($friend_id);
+
+        if(!$friendshipStatus){
+            return response()->json([]);
+        }
+
         $messages = Conversation::where(function($query) use ($user_id, $friend_id) {
             $query->where('user_id', $user_id)
                 ->where('friend_id', $friend_id);
@@ -60,7 +66,7 @@ class ChatController extends Controller
         ->get();
 
         $messagesWithSequentialId = $messages->map(function($message, $index) {
-            $message->conversation_id = $index + 1;  // Assigning sequential ID starting from 1
+            $message->conversation_id = $index + 1;
             return $message;
         });
 
